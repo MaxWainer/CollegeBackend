@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace CollegeBackend.Controllers;
 
-[Microsoft.AspNetCore.Components.Route("addActive/[controller]")]
+[Route("addActive/[controller]")]
 [Authorize(Policy = "Administrator")]
 public class AddActiveController : Controller
 {
