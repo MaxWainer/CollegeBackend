@@ -7,9 +7,7 @@ using Microsoft.Identity.Web.Resource;
 
 namespace CollegeBackend.Controllers;
 
-[Authorize]
 [Route("ticket/[controller]")]
-[RequiredScope(RequiredScopesConfigurationKey = "AzureAd:Scopes")]
 public class TicketsController : ControllerBase
 {
     private readonly ILogger<TicketsController> _logger;
@@ -24,9 +22,9 @@ public class TicketsController : ControllerBase
     [HttpPost]
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public ActionResult<IEnumerator<Ticket>> Get(User user)
+    public ActionResult<IEnumerator<Ticket>> Get(int passportId)
     {
-        var where = _context.Tickets.Where(ticket => ticket.PassportId == user.PassportId);
+        var where = _context.Tickets.Where(ticket => ticket.PassportId == passportId);
         return new ActionResult<IEnumerator<Ticket>>(where.GetEnumerator());
     }
 }

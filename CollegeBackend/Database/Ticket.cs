@@ -14,7 +14,7 @@ namespace CollegeBackend
         public int SittingId { get; set; }
 
         public virtual Station EndStation { get; set; } = null!;
-        public virtual User Passport { get; set; } = null!;
+        public virtual User? Passport { get; set; } = null!;
         public virtual Active RelatedActive { get; set; } = null!;
         public virtual Direction RelatedDirection { get; set; } = null!;
         public virtual Sitting Sitting { get; set; } = null!;
