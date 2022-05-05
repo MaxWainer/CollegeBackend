@@ -60,7 +60,7 @@ builder
 
         // add service, college backend context
         service
-            .AddDiService(new CollegeBackendContext(new DbContextOptions<CollegeBackendContext>()));
+            .InjectService(new CollegeBackendContext(new DbContextOptions<CollegeBackendContext>()));
     });
 
 // https://aka.ms/aspnetcore/swashbuckle

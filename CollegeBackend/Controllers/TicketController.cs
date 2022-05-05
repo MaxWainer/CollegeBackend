@@ -25,7 +25,7 @@ public class TicketController : Controller
             where ticket.PassportId == passportId
             select ticket;
         
-        return new ActionResult<List<Ticket>>(await where.ToListAsync());
+        return (await where.ToListAsync()).ToActionResult();
     }
     
     [HttpPost("order/{orderData}")]

@@ -2,20 +2,12 @@ namespace CollegeBackend.Extensions;
 
 public static class CollectionExtensions
 {
-    public static bool ContainsPredicate<T>(this IEnumerable<T> collection, Func<T, bool> predicate)
+    public static bool Contains<T>(this IEnumerable<T> collection, Func<T, bool> predicate)
     {
-        foreach (var t in collection)
-        {
-            if (predicate.Invoke(t))
-            {
-                return true;
-            }
-        }
-
-        return false;
+        return collection.Any(predicate.Invoke);
     }
     
-    public static IServiceCollection AddDiService<T>(this IServiceCollection collection, T instance)
+    public static IServiceCollection InjectService<T>(this IServiceCollection collection, T instance)
     {
         if (instance == null) throw new ArgumentNullException(nameof(instance));
     

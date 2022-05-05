@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace CollegeBackend
+﻿namespace CollegeBackend
 {
     public partial class User
     {
