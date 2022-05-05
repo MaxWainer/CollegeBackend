@@ -5,19 +5,32 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CollegeBackend.Controllers;
 
-[Route("order/[controller]")]
-[Authorize(Policy = "User")]
-public class OrderTicketDataController : Controller
+[Route("ticket/[controller]")]
+[ApiController]
+public class TicketController : Controller
 {
     private readonly CollegeBackendContext _context;
 
-    public OrderTicketDataController(CollegeBackendContext context)
+    public TicketController(CollegeBackendContext context)
     {
         _context = context;
     }
-
-    [HttpPost]
-    public async Task<ActionResult<string>> Create(
+    
+    [HttpPost("list/{passportId}")]
+    public async Task<ActionResult<List<Ticket>>> ListTickets(int passportId)
+    {
+        // just select by passport id
+        var where =
+            from ticket in _context.Tickets
+            where ticket.PassportId == passportId
+            select ticket;
+        
+        return new ActionResult<List<Ticket>>(await where.ToListAsync());
+    }
+    
+    [HttpPost("order/{orderData}")]
+    //[Authorize(Policy = "User")]
+    public async Task<JsonResult> OrderTicket(
         [Bind("PassportId", "SittingId", "ActiveId", "TrainId", "CarriageId")]
         OrderData orderData)
     {
@@ -36,6 +49,8 @@ public class OrderTicketDataController : Controller
             from ticket in _context.Tickets
             where ticket.RelatedActiveId == orderData.ActiveId
                   && ticket.SittingId == orderData.SittingId
+                  && ticket.Sitting.RelatedCarriageId == orderData.CarriageId
+                  && ticket.Sitting.RelatedCarriage.RelatedTrainId == orderData.TrainId
             select ticket;
 
         // get first ticket where passport is null
@@ -58,7 +73,7 @@ public class OrderTicketDataController : Controller
 
         // set to ticket new passport
         possibleTicket.Passport = user;
-        
+
         // and passport id
         possibleTicket.PassportId = orderData.PassportId;
 
@@ -68,13 +83,47 @@ public class OrderTicketDataController : Controller
         // success
         return OrderTicketEnumResult.Success.ToActionResult();
     }
+    
+    [HttpGet("delete/{ticketId}")]
+    [Authorize(Policy = "Administrator")]
+    public async Task<JsonResult> DeleteTicket(int ticketId)
+    {
+        // we use it twice
+        var tickets = _context.Tickets;
+
+        // select all tickets with specific id
+        var result = (from ticket in tickets
+                where ticket.TicketId == ticketId
+                select ticket
+            ).FirstOrDefault();
+
+        // if result is null, return ticket not found
+        if (result == null)
+        {
+            return DeleteTicketEnumResult.TicketNotFound.ToActionResult();
+        }
+
+        // else we remove and reload it
+        await tickets.Remove(result)
+            .ReloadAsync();
+
+        // success
+        return DeleteTicketEnumResult.Success.ToActionResult();
+    }
+    
 }
 
 public enum OrderTicketEnumResult
 {
+    Success, // 0
+    AlreadyCreatedOrNotExists, // 1
+    UserNotExists // 2
+}
+
+public enum DeleteTicketEnumResult
+{
     Success,
-    AlreadyCreatedOrNotExists,
-    UserNotExists
+    TicketNotFound
 }
 
 public class OrderData

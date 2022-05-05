@@ -1,22 +1,49 @@
 ﻿using CollegeBackend.Extensions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace CollegeBackend.Controllers;
 
-[Route("addActive/[controller]")]
-[Authorize(Policy = "Administrator")]
-public class AddActiveController : Controller
+[Route("active/[controller]")]
+[ApiController]
+public class ActiveController : Controller
 {
     private readonly CollegeBackendContext _context;
 
-    public AddActiveController(CollegeBackendContext context)
+    public ActiveController(CollegeBackendContext context)
     {
         _context = context;
     }
 
-    [HttpPost]
-    public async Task<ActionResult<string>> AddActive(
+    [HttpGet("list")]
+    public async Task<ActionResult<Active[]>> ListActives()
+    {
+        return new ActionResult<Active[]>(
+            await _context.Actives.ToArrayAsync());
+    }
+    
+    [HttpPost("remove/{activeId}")]
+    [Authorize(Policy = "Administrator")]
+    public async Task<JsonResult> RemoveActive(int activeId)
+    {
+        var active = await _context.Actives.AsQueryable()
+            .FirstOrDefaultAsync(active => active.ActiveId == activeId);
+
+        if (active == null)
+        {
+            return ActiveEnumResult.UnknownActive.ToActionResult();
+        }
+
+        await _context.Actives.Remove(active)
+            .ReloadAsync();
+
+        return ActiveEnumResult.Success.ToActionResult();
+    }
+
+    [HttpPost("add")]
+    //[Authorize(Policy = "Administrator")]
+    public async Task<JsonResult> AddActive(
         [Bind("StationId", "StartDateTime", "MainDirectionId", "TrainId", "MainStartDateTime")]
         ActiveData activeData)
     {
@@ -25,7 +52,7 @@ public class AddActiveController : Controller
 
         if (!trainResult)
         {
-            return AddActiveEnumResult.UnknownTrain.ToActionResult();
+            return ActiveEnumResult.UnknownTrain.ToActionResult();
         }
 
         // check is direction exists
@@ -34,7 +61,7 @@ public class AddActiveController : Controller
 
         if (!directionResult)
         {
-            return AddActiveEnumResult.UnknownDirection.ToActionResult();
+            return ActiveEnumResult.UnknownDirection.ToActionResult();
         }
 
         // check is station exists
@@ -43,7 +70,7 @@ public class AddActiveController : Controller
 
         if (!stationResult)
         {
-            return AddActiveEnumResult.UnknownStation.ToActionResult();
+            return ActiveEnumResult.UnknownStation.ToActionResult();
         }
 
         // add async and reload async
@@ -57,15 +84,16 @@ public class AddActiveController : Controller
             }))
             .ReloadAsync();
 
-        return AddActiveEnumResult.Success.ToActionResult();
+        return ActiveEnumResult.Success.ToActionResult();
     }
 }
 
-public enum AddActiveEnumResult
+public enum ActiveEnumResult
 {
     UnknownTrain,
     UnknownDirection,
     UnknownStation,
+    UnknownActive,
     Success
 }
 

@@ -2,7 +2,7 @@
 
 public static class ScopeFunctions
 {
-    public static T Apply<T>(this T value, Action<T> action)
+    public static TValue Apply<TValue>(this TValue value, Action<TValue> action)
     {
         if (action == null) throw new ArgumentNullException(nameof(action));
 

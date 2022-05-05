@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
+
 //Add services to the container.
 builder
     .Services
@@ -44,6 +45,16 @@ builder
             });
         });
 
+        service.AddAuthentication(options =>
+        { 
+            options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+            options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+        }).AddJwtBearer(options =>
+        {
+            options.Authority = $"https://{builder.Configuration["Auth0:Domain"]}/";
+            options.Audience = builder.Configuration["Auth0:Audience"];
+        });
+
         // add controllers
         service.AddControllers();
 
@@ -53,7 +64,7 @@ builder
     });
 
 // https://aka.ms/aspnetcore/swashbuckle
-//builder.Services.AddEndpointsApiExplorer();
+// builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 var app = builder.Build();

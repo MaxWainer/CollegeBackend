@@ -4,8 +4,13 @@ namespace CollegeBackend.Extensions;
 
 public static class ActionResultExtension
 {
-    public static ActionResult<string> ToActionResult<TEnum>(this TEnum it) where TEnum : Enum
+    public static JsonResult ToActionResult<TEnum>(this TEnum it) where TEnum : Enum
     {
-        return new ActionResult<string>(it.ToString());
+        return new JsonResult(new ResultValue<TEnum> { Result = it });
+    }
+
+    private class ResultValue<TEnum> where TEnum : Enum
+    {
+        public TEnum Result { get; set; }
     }
 }
