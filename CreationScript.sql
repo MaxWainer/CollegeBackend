@@ -90,6 +90,7 @@ CREATE TABLE [users]
     [first_name]  nvarchar(255) NOT NULL,
     [second_name] nvarchar(255) NOT NULL,
     [patronymic]  nvarchar(255) NOT NULL,
+    [role]        bit           NOT NULL,
     PRIMARY KEY CLUSTERED ([passport_id])
         WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON)
 )

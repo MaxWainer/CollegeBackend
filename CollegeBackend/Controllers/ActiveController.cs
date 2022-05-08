@@ -22,7 +22,7 @@ public class ActiveController : Controller
         return new ActionResult<Active[]>(
             await _context.Actives.ToArrayAsync());
     }
-    
+
     [HttpPost("remove/{activeId}")]
     [Authorize(Policy = "Administrator")]
     public async Task<JsonResult> RemoveActive(int activeId)
@@ -90,11 +90,11 @@ public class ActiveController : Controller
 
 public enum ActiveEnumResult
 {
+    Success,
     UnknownTrain,
     UnknownDirection,
     UnknownStation,
-    UnknownActive,
-    Success
+    UnknownActive
 }
 
 public class ActiveData
