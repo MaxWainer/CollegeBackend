@@ -28,14 +28,14 @@ public class UserController : Controller
         _authenticationManager = authenticationManager;
     }
 
-    [HttpGet("deleteUser")]
+    [HttpPost("deleteUser")]
     [Authorize(Policy = "AdministratorAndModerator")]
     public async Task<JsonResult> DeleteUser([FromBody] DeleteUserModel deleteUserModel)
     {
         return new JsonResult("");
     }
 
-    [HttpGet("updateRole")]
+    [HttpPost("updateRole")]
     [Authorize(Policy = "Administrator")]
     public async Task<JsonResult> UpdateRole(
         [FromBody] RoleUpdateModel roleUpdateModel)
@@ -43,7 +43,7 @@ public class UserController : Controller
         return new JsonResult("");
     }
 
-    [HttpGet("loginUser")]
+    [HttpPost("loginUser")]
     [AllowAnonymous]
     public async Task<JsonResult> Login(
         [FromBody] LoginModel loginModel)
@@ -61,7 +61,7 @@ public class UserController : Controller
         return user.Token.ToString().ToActionResult();
     }
 
-    [HttpGet("registerUser")]
+    [HttpPost("registerUser")]
     [AllowAnonymous]
     public async Task<JsonResult> Register(
         [FromBody] RegisterModel registerModel)
@@ -89,6 +89,8 @@ public class UserController : Controller
                 // default role = user
                 Role = "User"
             });
+
+            await _context.SaveChangesAsync();
 
             return UserEnumRegisterResult.Success.ToActionResult();
         }
@@ -146,10 +148,12 @@ public class UserController : Controller
 
     private static bool IsPasswordStrong(string password)
     {
-        return !password.Contains(' ') // is there any whitespace (shouldn't be)
-               && password.Any(char.IsLower) // is any lower chars
-               && password.Any(char.IsUpper) // is any upper chars
-               && password.Count(rune => SpecialChars.Contains(rune)) >= 4; // at least 4 special chars
+        return true;
+        // return password.Length <= 6 && password.Length >= 20 && // ensure that length bigger than 6 and shorter than 20 chars
+        //        !password.Contains(' ') // is there any whitespace (shouldn't be)
+        //        && password.Any(char.IsLower) // is any lower chars
+        //        && password.Any(char.IsUpper) // is any upper chars
+        //        && password.Count(rune => SpecialChars.Contains(rune)) >= 4; // at least 4 special chars
     }
 
     private async Task<User?> GetUser(IUserTargetedModel userTargetedModel)

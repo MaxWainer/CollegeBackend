@@ -9,4 +9,5 @@ public class OrderModel
     [Required] public int ActiveId { get; set; }
     [Required] public int PassportId { get; set; }
     [Required] public int SittingId { get; set; }
+    [Required] public int EndStationId { get; set; }
 }

@@ -69,8 +69,8 @@ namespace CollegeBackend
                     .HasConstraintName("fk_active_stations_1");
 
                 entity.HasOne(d => d.Train)
-                    .WithMany(p => p.Actives)
-                    .HasForeignKey(d => d.TrainId)
+                    .WithOne(p => p.Active)
+                    .HasForeignKey<Active>(d => d.TrainId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("fk_active_trains_1");
             });
@@ -199,8 +199,7 @@ namespace CollegeBackend
                     .HasConstraintName("fk_tickets_directions_1");
 
                 entity.HasOne(d => d.Sitting)
-                    .WithMany(p => p.Tickets)
-                    .HasForeignKey(d => d.SittingId)
+                    .WithOne(p => p.Ticket)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("fk_sitting_tickets_1");
             });

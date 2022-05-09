@@ -12,7 +12,7 @@ public class AuthenticationManager : IAuthenticationManager
     public TokenizedUser? Authenticate(User user)
     {
         // check is user exists
-        if (_users.Contains((_, value) => value.User.Equals(user)))
+        if (_users.Contains((_, value) => value.User.PassportId == user.PassportId))
         {
             return null;
         }

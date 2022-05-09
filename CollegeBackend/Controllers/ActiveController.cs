@@ -40,6 +40,8 @@ public class ActiveController : Controller
 
         await _context.Actives.Remove(active)
             .ReloadAsync();
+        
+        await _context.SaveChangesAsync();
 
         return ActiveEnumResult.Success.ToActionResult();
     }
@@ -85,6 +87,8 @@ public class ActiveController : Controller
                 MainDirectionId = activeModule.MainDirectionId // define main direction
             }))
             .ReloadAsync();
+        
+        await _context.SaveChangesAsync();
 
         return ActiveEnumResult.Success.ToActionResult();
     }
