@@ -30,10 +30,7 @@ public class ActiveController : Controller
         var active = await _context.Actives.AsQueryable()
             .FirstOrDefaultAsync(active => active.ActiveId == activeId);
 
-        if (active == null)
-        {
-            return ActiveEnumResult.UnknownActive.ToActionResult();
-        }
+        if (active == null) return ActiveEnumResult.UnknownActive.ToActionResult();
 
         await _context.Actives.Remove(active)
             .ReloadAsync();
@@ -44,43 +41,34 @@ public class ActiveController : Controller
     [HttpPost("add")]
     //[Authorize(Policy = "Administrator")]
     public async Task<JsonResult> AddActive(
-        [Bind("StationId", "StartDateTime", "MainDirectionId", "TrainId", "MainStartDateTime")]
-        ActiveData activeData)
+        [FromBody]
+        ActiveModel activeModel)
     {
         // check is train exists
-        var trainResult = await _context.Trains.IsExists(train => train.TrainId == activeData.TrainId);
+        var trainResult = await _context.Trains.IsExists(train => train.TrainId == activeModel.TrainId);
 
-        if (!trainResult)
-        {
-            return ActiveEnumResult.UnknownTrain.ToActionResult();
-        }
+        if (!trainResult) return ActiveEnumResult.UnknownTrain.ToActionResult();
 
         // check is direction exists
         var directionResult =
-            await _context.Directions.IsExists(direction => direction.DirectionId == activeData.MainDirectionId);
+            await _context.Directions.IsExists(direction => direction.DirectionId == activeModel.MainDirectionId);
 
-        if (!directionResult)
-        {
-            return ActiveEnumResult.UnknownDirection.ToActionResult();
-        }
+        if (!directionResult) return ActiveEnumResult.UnknownDirection.ToActionResult();
 
         // check is station exists
         var stationResult =
-            await _context.Stations.IsExists(direction => direction.StationId == activeData.StationId);
+            await _context.Stations.IsExists(direction => direction.StationId == activeModel.StationId);
 
-        if (!stationResult)
-        {
-            return ActiveEnumResult.UnknownStation.ToActionResult();
-        }
+        if (!stationResult) return ActiveEnumResult.UnknownStation.ToActionResult();
 
         // add async and reload async
         await (await _context.Actives.AddAsync(new Active
             {
-                StationId = activeData.StationId, // define station
-                StartDateTime = activeData.StartDateTime, // define start date time
-                MainStartDateTime = activeData.MainStartDateTime, // define main start date time
-                TrainId = activeData.TrainId, // define train id
-                MainDirectionId = activeData.MainDirectionId // define main direction
+                StationId = activeModel.StationId, // define station
+                StartDateTime = activeModel.StartDateTime, // define start date time
+                MainStartDateTime = activeModel.MainStartDateTime, // define main start date time
+                TrainId = activeModel.TrainId, // define train id
+                MainDirectionId = activeModel.MainDirectionId // define main direction
             }))
             .ReloadAsync();
 
@@ -97,7 +85,7 @@ public enum ActiveEnumResult
     UnknownActive
 }
 
-public class ActiveData
+public class ActiveModel
 {
     public int StationId { get; set; }
     public DateTime StartDateTime { get; set; }

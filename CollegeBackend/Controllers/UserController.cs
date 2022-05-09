@@ -16,15 +16,15 @@ public class UserController : Controller
 
     [HttpGet("loginUser")]
     public async Task<JsonResult> TryLogin(
-        [Bind("Username", "Password")] LoginData loginData)
+        [FromBody] LoginModel loginModel)
     {
         return new JsonResult("");
     }
 
     [HttpGet("registerUser")]
     public async Task<JsonResult> TryRegister(
-        [Bind("Username", "Password", "PassportId")]
-        RegisterData registerData)
+        [FromBody]
+        RegisterModel registerModel)
     {
         return new JsonResult("");
     }
@@ -35,7 +35,7 @@ public class UserController : Controller
     }
 }
 
-public class RegisterData
+public class RegisterModel
 {
     public string Username { get; set; }
 
@@ -44,7 +44,7 @@ public class RegisterData
     public int PassportId { get; set; }
 }
 
-public class LoginData
+public class LoginModel
 {
     public string Username { get; set; }
 

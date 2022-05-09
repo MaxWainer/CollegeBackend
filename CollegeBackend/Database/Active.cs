@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using System;
+using System.Collections.Generic;
 
 namespace CollegeBackend
 {
@@ -9,8 +10,6 @@ namespace CollegeBackend
             Tickets = new HashSet<Ticket>();
         }
 
-        // https://stackoverflow.com/questions/36155429/auto-increment-on-partial-primary-key-with-entity-framework-core
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int ActiveId { get; set; }
         public int StationId { get; set; }
         public DateTime StartDateTime { get; set; }

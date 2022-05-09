@@ -6,11 +6,11 @@ public static class CollectionExtensions
     {
         return collection.Any(predicate.Invoke);
     }
-    
+
     public static IServiceCollection InjectService<T>(this IServiceCollection collection, T instance)
     {
         if (instance == null) throw new ArgumentNullException(nameof(instance));
-    
+
         // add it via ServiceDescriptor
         collection.Add(
             new ServiceDescriptor(typeof(T), instance)

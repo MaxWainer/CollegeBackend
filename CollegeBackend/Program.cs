@@ -1,6 +1,7 @@
 using CollegeBackend;
 using CollegeBackend.Extensions;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authentication.OAuth;
 using Microsoft.AspNetCore.Authorization.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 
@@ -46,7 +47,7 @@ builder
         });
 
         service.AddAuthentication(options =>
-        { 
+        {
             options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
             options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
         }).AddJwtBearer(options =>
@@ -54,13 +55,13 @@ builder
             options.Authority = $"https://{builder.Configuration["Auth0:Domain"]}/";
             options.Audience = builder.Configuration["Auth0:Audience"];
         });
+        
 
         // add controllers
         service.AddControllers();
 
         // add service, college backend context
-        service
-            .InjectService(new CollegeBackendContext(new DbContextOptions<CollegeBackendContext>()));
+        service.AddDbContext<CollegeBackendContext>();
     });
 
 // https://aka.ms/aspnetcore/swashbuckle
