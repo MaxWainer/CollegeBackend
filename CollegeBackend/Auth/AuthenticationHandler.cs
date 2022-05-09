@@ -6,13 +6,13 @@ using Microsoft.Extensions.Options;
 
 namespace CollegeBackend.Auth;
 
-public class AuthHandler : AuthenticationHandler<TokenOptions>
+public class AuthenticationHandler : AuthenticationHandler<AuthenticationTokenOptions>
 {
     private static readonly AuthenticateResult Unauthorized = AuthenticateResult.Fail("Unauthorized");
 
     private readonly IAuthenticationManager _authenticationManager;
 
-    public AuthHandler(IOptionsMonitor<TokenOptions> options, ILoggerFactory logger, UrlEncoder encoder,
+    public AuthenticationHandler(IOptionsMonitor<AuthenticationTokenOptions> options, ILoggerFactory logger, UrlEncoder encoder,
         ISystemClock clock, IAuthenticationManager authenticationManager) : base(options, logger, encoder, clock)
     {
         _authenticationManager = authenticationManager;

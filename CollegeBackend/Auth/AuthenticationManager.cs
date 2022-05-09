@@ -12,20 +12,21 @@ public class AuthenticationManager : IAuthenticationManager
     public TokenizedUser? Authenticate(User user)
     {
         // check is user exists
-        if (_users.Contains(pair => pair.Value.User.Equals(user)))
+        if (_users.Contains((_, value) => value.User.Equals(user)))
         {
             return null;
         }
-        
+
         // generate token
         var generated = Guid.NewGuid();
+        
         // create new user
         var tokenizedUser = new TokenizedUser
         {
             Token = generated,
             User = user
         };
-        
+
         // add in cache
         _users.Add(generated, tokenizedUser);
 

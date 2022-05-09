@@ -2,6 +2,6 @@
 
 namespace CollegeBackend.Auth;
 
-public class TokenOptions : AuthenticationSchemeOptions
+public class AuthenticationTokenOptions : AuthenticationSchemeOptions
 {
 }

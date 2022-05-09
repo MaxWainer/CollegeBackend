@@ -2,20 +2,20 @@ namespace CollegeBackend.Extensions;
 
 public static class CollectionExtensions
 {
-    public static bool Contains<T>(this IEnumerable<T> collection, Func<T, bool> predicate)
+    public static bool Contains<TEntity>(this IEnumerable<TEntity> collection, Func<TEntity, bool> predicate)
     {
         return collection.Any(predicate.Invoke);
     }
 
-    public static IServiceCollection InjectService<T>(this IServiceCollection collection, T instance)
+    public static bool Contains<TKey, TValue>(this IDictionary<TKey, TValue> dictionary,
+        Func<TKey, TValue, bool> predicate)
     {
-        if (instance == null) throw new ArgumentNullException(nameof(instance));
+        return dictionary.Any(pair => predicate.Invoke(pair.Key, pair.Value));
+    }
 
-        // add it via ServiceDescriptor
-        collection.Add(
-            new ServiceDescriptor(typeof(T), instance)
-        );
-
-        return collection;
+    public static void ForEach<TKey, TValue>(this IDictionary<TKey, TValue> dictionary,
+        Action<TKey, TValue> action)
+    {
+        foreach (var (key, value) in dictionary) action.Invoke(key, value);
     }
 }

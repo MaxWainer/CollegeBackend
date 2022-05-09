@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
-using TokenOptions = CollegeBackend.Auth.TokenOptions;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -23,7 +22,7 @@ builder
         });
 
         service.AddAuthentication("Basic")
-            .AddScheme<TokenOptions, AuthHandler>("Basic", null);
+            .AddScheme<AuthenticationTokenOptions, AuthenticationHandler>("Basic", null);
 
         service.AddAuthorization(options =>
         {
