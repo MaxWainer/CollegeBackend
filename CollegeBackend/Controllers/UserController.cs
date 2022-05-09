@@ -148,12 +148,11 @@ public class UserController : Controller
 
     private static bool IsPasswordStrong(string password)
     {
-        return true;
-        // return password.Length <= 6 && password.Length >= 20 && // ensure that length bigger than 6 and shorter than 20 chars
-        //        !password.Contains(' ') // is there any whitespace (shouldn't be)
-        //        && password.Any(char.IsLower) // is any lower chars
-        //        && password.Any(char.IsUpper) // is any upper chars
-        //        && password.Count(rune => SpecialChars.Contains(rune)) >= 4; // at least 4 special chars
+        return password.Length is >= 6 and <= 20 // password size must be between 6 and 20
+               && !password.Contains(' ') // check is there any whitespace
+               && password.Any(char.IsLower) // check is there any lowercase chars
+               && password.Any(char.IsUpper) // check is there any uppercase chars
+               && password.Count(rune => SpecialChars.Contains(rune)) <= 4; // at least 4 special chars
     }
 
     private async Task<User?> GetUser(IUserTargetedModel userTargetedModel)
