@@ -1,9 +1,12 @@
 using CollegeBackend;
+using CollegeBackend.Auth;
 using CollegeBackend.Extensions;
+using CollegeBackend.Objects.Database;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Authentication.OAuth;
-using Microsoft.AspNetCore.Authorization.Infrastructure;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
+using TokenOptions = CollegeBackend.Auth.TokenOptions;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,55 +16,42 @@ builder
     .Services
     .Apply(service =>
     {
-        // under review
-        // -----------------
-        // service.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-        //     .AddMicrosoftIdentityWebApi(builder.Configuration.GetSection("AzureAdB2C"));
-
-        // add new options
-        service.AddAuthorization(options =>
-        {
-            // user policy
-            options.AddPolicy("User", policy =>
-            {
-                // use jwt authentication schemes
-                policy.AuthenticationSchemes.Add(JwtBearerDefaults.AuthenticationScheme);
-                // we need authenticated user
-                policy.RequireAuthenticatedUser();
-            });
-
-            // admin policy
-            options.AddPolicy("Administrator", policy =>
-            {
-                // use jwt authentication schemes
-                policy.AuthenticationSchemes.Add(JwtBearerDefaults.AuthenticationScheme);
-                // we need authenticated user
-                policy.RequireAuthenticatedUser();
-
-                // add as requirement, roles auth
-                policy.Requirements.Add(new RolesAuthorizationRequirement(new[]
-                {
-                    "admin"
-                }));
-            });
-        });
-
         service.AddAuthentication(options =>
         {
             options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
             options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-        }).AddJwtBearer(options =>
-        {
-            options.Authority = $"https://{builder.Configuration["Auth0:Domain"]}/";
-            options.Audience = builder.Configuration["Auth0:Audience"];
         });
-        
+
+        service.AddAuthentication("Basic")
+            .AddScheme<TokenOptions, AuthHandler>("Basic", null);
+
+        service.AddAuthorization(options =>
+        {
+            options.AddPolicy("Administrator",
+                policy => policy.RequireRole("Administrator"));
+
+            options.AddPolicy("User",
+                policy => policy.RequireRole("User"));
+
+            options.AddPolicy("Moderator",
+                policy => policy.RequireRole("Moderator"));
+
+            options.AddPolicy("AdministratorAndModerator",
+                policy => policy.RequireRole("Administrator", "Moderator"));
+        });
 
         // add controllers
         service.AddControllers();
 
         // add service, college backend context
-        service.AddDbContext<CollegeBackendContext>();
+        var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ??
+                               throw new ArgumentNullException("connectionString",
+                                   "Missing connection string value in appsettings.json!");
+
+        service.AddSingleton<IAuthenticationManager, AuthenticationManager>();
+        service.AddSingleton<IPasswordHasher<User?>, PasswordHasher<User?>>();
+        service.AddDbContext<CollegeBackendContext>(options =>
+            options.UseSqlServer(connectionString, x => x.UseNetTopologySuite()));
     });
 
 // https://aka.ms/aspnetcore/swashbuckle

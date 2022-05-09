@@ -15,9 +15,9 @@ CREATE TABLE [active]
     [train_id]             int      NOT NULL,
     [main_start_date_time] datetime NOT NULL,
     CONSTRAINT [_copy_2] PRIMARY KEY CLUSTERED ([active_id])
-    WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON)
-    )
-    GO
+        WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON)
+)
+GO
 
 CREATE TABLE [carriages]
 (
@@ -25,9 +25,9 @@ CREATE TABLE [carriages]
     [index]            char(3) NOT NULL,
     [related_train_id] int     NOT NULL,
     CONSTRAINT [_copy_5] PRIMARY KEY CLUSTERED ([carriage_id])
-    WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON)
-    )
-    GO
+        WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON)
+)
+GO
 
 CREATE TABLE [directions]
 (
@@ -36,9 +36,9 @@ CREATE TABLE [directions]
     [start_station_id] int           NOT NULL,
     [end_station_id]   int           NOT NULL,
     CONSTRAINT [_copy_1] PRIMARY KEY CLUSTERED ([direction_id])
-    WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON)
-    )
-    GO
+        WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON)
+)
+GO
 
 CREATE TABLE [sitting]
 (
@@ -46,9 +46,9 @@ CREATE TABLE [sitting]
     [index]               char(3) NOT NULL,
     [related_carriage_id] int     NOT NULL,
     CONSTRAINT [_copy_6] PRIMARY KEY CLUSTERED ([sit_id])
-    WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON)
-    )
-    GO
+        WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON)
+)
+GO
 
 CREATE TABLE [stations]
 (
@@ -56,9 +56,9 @@ CREATE TABLE [stations]
     [related_direction] int           NOT NULL,
     [name]              nvarchar(255) NOT NULL,
     CONSTRAINT [_copy_4] PRIMARY KEY CLUSTERED ([station_id])
-    WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON)
-    )
-    GO
+        WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON)
+)
+GO
 
 CREATE TABLE [tickets]
 (
@@ -66,23 +66,23 @@ CREATE TABLE [tickets]
     [related_direction_id] int  NOT NULL,
     [related_active_id]    int  NOT NULL,
     [start_date]           date NOT NULL,
-    [passport_id]          int  NOT NULL,
+    [passport_id]          int  NULL,
     [end_station_id]       int  NOT NULL,
     [sitting_id]           int  NOT NULL,
     CONSTRAINT [_copy_3]
-    PRIMARY KEY CLUSTERED ([ticket_id])
-    WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON)
-    )
-    GO
+        PRIMARY KEY CLUSTERED ([ticket_id])
+            WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON)
+)
+GO
 
 CREATE TABLE [trains]
 (
     [train_id] int           NOT NULL IDENTITY (1,1),
     [name]     nvarchar(255) NOT NULL,
     CONSTRAINT [_copy_7] PRIMARY KEY CLUSTERED ([train_id])
-    WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON)
-    )
-    GO
+        WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON)
+)
+GO
 
 CREATE TABLE [users]
 (
@@ -90,64 +90,64 @@ CREATE TABLE [users]
     [first_name]  nvarchar(255) NOT NULL,
     [second_name] nvarchar(255) NOT NULL,
     [patronymic]  nvarchar(255) NOT NULL,
-    [role]        int           NOT NULL,
+    [role]        nvarchar(255) NOT NULL,
     [username]    nvarchar(max) NOT NULL,
     [password]    nvarchar(max) NOT NULL,
     PRIMARY KEY CLUSTERED ([passport_id])
-    WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON)
-    )
-    GO
+        WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON)
+)
+GO
 
 ALTER TABLE [active]
     ADD CONSTRAINT [fk_active_stations_1] FOREIGN KEY ([station_id]) REFERENCES [stations] ([station_id])
-    GO
+GO
 ALTER TABLE [active]
     ADD CONSTRAINT [fk_active_directions_1] FOREIGN KEY ([main_direction_id]) REFERENCES [directions] ([direction_id])
-    GO
+GO
 ALTER TABLE [active]
     ADD CONSTRAINT [fk_active_trains_1] FOREIGN KEY ([train_id]) REFERENCES [trains] ([train_id])
-    GO
+GO
 ALTER TABLE [carriages]
     ADD CONSTRAINT [fk_carriages_trains_1] FOREIGN KEY ([related_train_id]) REFERENCES [trains] ([train_id])
-    GO
+GO
 ALTER TABLE [sitting]
     ADD CONSTRAINT [fk_sitting_carriages_1] FOREIGN KEY ([related_carriage_id]) REFERENCES [carriages] ([carriage_id])
-    GO
+GO
 ALTER TABLE [tickets]
     ADD CONSTRAINT [fk_sitting_tickets_1] FOREIGN KEY ([sitting_id]) REFERENCES [sitting] ([sit_id])
-    GO
+GO
 ALTER TABLE [stations]
     ADD CONSTRAINT [fk_stations_directions_1] FOREIGN KEY ([related_direction]) REFERENCES [directions] ([direction_id])
-    GO
+GO
 ALTER TABLE [tickets]
     ADD CONSTRAINT [fk_tickets_directions_1] FOREIGN KEY ([related_direction_id]) REFERENCES [directions] ([direction_id])
-    GO
+GO
 ALTER TABLE [tickets]
     ADD CONSTRAINT [fk_tickets_active_1] FOREIGN KEY ([related_active_id]) REFERENCES [active] ([active_id])
-    GO
+GO
 ALTER TABLE [tickets]
     ADD CONSTRAINT [fk_tickets_stations_1] FOREIGN KEY ([end_station_id]) REFERENCES [stations] ([station_id])
-    GO
+GO
 ALTER TABLE [tickets]
     ADD CONSTRAINT [fk_users_tickets_1] FOREIGN KEY ([passport_id]) REFERENCES [users] ([passport_id])
-    GO
+GO
 
 
-    INSERT INTO trains (name)
-    VALUES (N'Ингушетия'),
-    (N'Италмас'),
-    (N'Пассажирский'),
-    (N'Красная стрела'),
-    (N'Скорый'),
-    (N'Ласточка'),
-    (N'Сапсан'),
-    (N'Москва'),
-    (N'Россия'),
-    (N'Волга'),
-    (N'Воронеж'),
-    (N'Жигули'),
-    (N'Тамбов'),
-    (N'Вологда');
+INSERT INTO trains (name)
+VALUES (N'Ингушетия'),
+       (N'Италмас'),
+       (N'Пассажирский'),
+       (N'Красная стрела'),
+       (N'Скорый'),
+       (N'Ласточка'),
+       (N'Сапсан'),
+       (N'Москва'),
+       (N'Россия'),
+       (N'Волга'),
+       (N'Воронеж'),
+       (N'Жигули'),
+       (N'Тамбов'),
+       (N'Вологда');
 
 INSERT INTO carriages ([index], related_train_id)
 VALUES ('A1', 1),

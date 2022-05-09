@@ -1,4 +1,6 @@
 using CollegeBackend.Extensions;
+using CollegeBackend.Objects.Database;
+using CollegeBackend.Objects.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -29,20 +31,11 @@ public class TicketController : Controller
     }
 
     [HttpPost("order/{orderModel}")]
-    //[Authorize(Policy = "User")]
+    [Authorize(Policy = "User")]
     public async Task<JsonResult> OrderTicket(
-        [FromBody]
+        [Bind("PassportId", "SittingId", "ActiveId", "TrainId", "CarriageId")]
         OrderModel orderModel)
     {
-        // under review
-        // ----------------
-        // var activeQuery =
-        //     from active in _context.Actives
-        //     where active.TrainId == orderData.TrainId &&
-        //           active.Train.Carriages.ContainsPredicate(
-        //               carriage => carriage.CarriageId == orderData.CarriageId)
-        //     select active;
-
         // define query where we select all tickets
         // with queried active id and sitting id
         var sitQuery =
@@ -57,13 +50,19 @@ public class TicketController : Controller
         var possibleTicket = await sitQuery.FirstOrDefaultAsync(ticket => ticket.Passport == null);
 
         // if it's null, ticket already created or not exists
-        if (possibleTicket == null) return OrderTicketEnumResult.AlreadyCreatedOrNotExists.ToActionResult();
+        if (possibleTicket == null)
+        {
+            return OrderTicketEnumResult.AlreadyCreatedOrNotExists.ToActionResult();
+        }
 
         // get user
         var user = await _context.Users.FindAsync(orderModel.PassportId);
 
         // if null, smth goes extremely wrong
-        if (user == null) return OrderTicketEnumResult.UserNotExists.ToActionResult();
+        if (user == null)
+        {
+            return OrderTicketEnumResult.UserNotExists.ToActionResult();
+        }
 
         // set to ticket new passport
         possibleTicket.Passport = user;
@@ -92,7 +91,10 @@ public class TicketController : Controller
             ).FirstOrDefault();
 
         // if result is null, return ticket not found
-        if (result == null) return DeleteTicketEnumResult.TicketNotFound.ToActionResult();
+        if (result == null)
+        {
+            return DeleteTicketEnumResult.TicketNotFound.ToActionResult();
+        }
 
         // else we remove and reload it
         await tickets.Remove(result)
@@ -114,13 +116,4 @@ public enum DeleteTicketEnumResult
 {
     Success,
     TicketNotFound
-}
-
-public class OrderModel
-{
-    public int TrainId { get; set; }
-    public int CarriageId { get; set; }
-    public int ActiveId { get; set; }
-    public int PassportId { get; set; }
-    public int SittingId { get; set; }
 }

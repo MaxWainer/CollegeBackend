@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using CollegeBackend.Objects.Database;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 
@@ -29,8 +30,7 @@ namespace CollegeBackend
         {
             if (!optionsBuilder.IsConfigured)
             {
-#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
-                optionsBuilder.UseSqlServer("Server=localhost;Database=CollegeBackend;User Id=sa;Password=<YourStrong@Passw0rd>;TrustServerCertificate=true", x => x.UseNetTopologySuite());
+                throw new ApplicationException("Looks like connection is not configured properly!");
             }
         }
 
@@ -237,7 +237,9 @@ namespace CollegeBackend
                     .HasMaxLength(255)
                     .HasColumnName("patronymic");
 
-                entity.Property(e => e.Role).HasColumnName("role");
+                entity.Property(e => e.Role)
+                    .HasMaxLength(255)
+                    .HasColumnName("role");
 
                 entity.Property(e => e.SecondName)
                     .HasMaxLength(255)

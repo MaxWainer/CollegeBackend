@@ -11,6 +11,6 @@ public static class ActionResultExtension
 
     private class ResultValue<TValue>
     {
-        public TValue Result { get; set; }
+        public TValue? Result { get; set; }
     }
 }
