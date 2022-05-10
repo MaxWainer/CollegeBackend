@@ -28,10 +28,7 @@ namespace CollegeBackend
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            if (!optionsBuilder.IsConfigured)
-            {
-                throw new ApplicationException("Looks like connection is not configured properly!");
-            }
+            if (!optionsBuilder.IsConfigured) throw new ApplicationException("Looks like connection is not configured properly!");
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

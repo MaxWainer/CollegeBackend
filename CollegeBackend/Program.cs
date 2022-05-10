@@ -15,14 +15,10 @@ builder
     .Services
     .Apply(service =>
     {
-        service.AddAuthentication(options =>
-        {
-            options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-            options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-        });
-
         service.AddAuthentication("Basic")
-            .AddScheme<AuthenticationTokenOptions, AuthenticationHandler>("Basic", null);
+            .AddScheme<AuthenticationTokenOptions, AuthenticationHandler>("Basic", _ =>
+            {
+            });
 
         service.AddAuthorization(options =>
         {

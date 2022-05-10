@@ -19,6 +19,7 @@ public class TicketController : Controller
     }
 
     [HttpPost("list/{passportId}")]
+    [Authorize(Policy = "User")]
     public async Task<ActionResult<List<Ticket>>> ListTickets(int passportId)
     {
         // just select by passport id
@@ -31,7 +32,7 @@ public class TicketController : Controller
     }
 
     [HttpPost("order")]
-    //[Authorize(Policy = "User")]
+    [Authorize(Policy = "User")]
     public async Task<JsonResult> OrderTicket(
         [FromBody]
         OrderModel orderModel)
