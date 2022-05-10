@@ -1,7 +1,9 @@
 ﻿namespace CollegeBackend.Objects;
 
-public class GenericResult<TEntity> : IGenericResult<TEntity> where TEntity : class
+public class GenericResult<TEntity, TEnum> : IGenericResult<TEntity, TEnum>
+    where TEntity : class
+    where TEnum : struct, IConvertible
 {
     public TEntity? Result { get; set; }
-    public string? ErrorMessage { get; set; }
+    public TEnum? ErrorValue { get; set; }
 }

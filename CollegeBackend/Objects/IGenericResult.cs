@@ -1,12 +1,14 @@
 ﻿namespace CollegeBackend.Objects;
 
-public interface IGenericResult<TEntity>
+public interface IGenericResult<TEntity, TEnum>
+    where TEntity : class
+    where TEnum : struct, IConvertible
 {
     public TEntity? Result { get; set; }
 
-    public string? ErrorMessage { get; set; }
-    
-    public bool Success => ErrorMessage == null;
+    public TEnum? ErrorValue { get; set; }
+
+    public bool Success => ErrorValue == null;
 
     public bool NotSuccess => !Success;
 }

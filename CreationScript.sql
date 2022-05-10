@@ -1232,3 +1232,10 @@ VALUES (1, '01-01-2000 00:10:00', 1, 1, '01-01-2000 00:00:00'),
        (28, '04-01-2000 00:10:00', 5, 5, '01-01-2000 00:00:00'),
        (29, '05-01-2000 00:10:00', 5, 5, '01-01-2000 00:00:00'),
        (30, '06-01-2000 00:10:00', 5, 5, '01-01-2000 00:00:00')
+
+-- default users
+INSERT INTO [users]
+VALUES (0, 'admin', 'admin', 'admin', 'Administrator', 'admin',
+        'AQAAAAEAACcQAAAAEHXqg4aVPN8q9c4JLMGDhl2g09SVHUtWB/ZJXjAjml4tn559tlzQ3RSA+3g3JzC4FQ=='), -- admin - password = admin (hashed)
+       (1, 'moderator', 'moderator', 'moderator', 'Moderator', 'moderator',
+        'AQAAAAEAACcQAAAAEF3jw4jSnLt3n0Hu1VYYUCJsChDyNdX8+s/Nic7J+YmFnEcfHiK6+K/jbyrLW31l6w==') -- moderator - password = moderator (hashed)

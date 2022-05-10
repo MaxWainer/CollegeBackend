@@ -3,6 +3,7 @@ using CollegeBackend.Extensions;
 using CollegeBackend.Objects;
 using CollegeBackend.Objects.Database;
 using CollegeBackend.Objects.Models;
+using CollegeBackend.Role;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -29,10 +30,20 @@ public class UserController : Controller
     }
 
     [HttpPost("deleteUser")]
-    [Authorize(Policy = "AdministratorAndModerator")]
+    [Authorize(Policy = "Administrator")]
     public async Task<JsonResult> DeleteUser([FromBody] DeleteUserModel deleteUserModel)
     {
-        return new JsonResult("");
+        var user = await GetUser(deleteUserModel);
+        
+        if (user == null) return UserEnumDeleteResult.UnknownUser.ToActionResult();
+
+        await _context.Users
+            .Remove(user)
+            .ReloadAsync();
+
+        await _context.SaveChangesAsync();
+        
+        return UserEnumDeleteResult.Success.ToActionResult();
     }
 
     [HttpPost("updateRole")]
@@ -40,7 +51,21 @@ public class UserController : Controller
     public async Task<JsonResult> UpdateRole(
         [FromBody] RoleUpdateModel roleUpdateModel)
     {
-        return new JsonResult("");
+        var user = await GetUser(roleUpdateModel);
+
+        if (user == null) return UserEnumUpdateRoleResult.UnknownUser.ToActionResult();
+
+        if (!Roles.AllowedNames.Contains(roleUpdateModel.NewRole)) return UserEnumUpdateRoleResult.UnknownRole.ToActionResult();
+
+        user.Role = roleUpdateModel.NewRole;
+
+        await _context.Users
+            .Update(user)
+            .ReloadAsync();
+
+        await _context.SaveChangesAsync();
+        
+        return UserEnumUpdateRoleResult.Success.ToActionResult();
     }
 
     [HttpPost("loginUser")]
@@ -48,17 +73,7 @@ public class UserController : Controller
     public async Task<JsonResult> Login(
         [FromBody] LoginModel loginModel)
     {
-        // try to generate new toke
-        var result = await GenerateTokenAsync(loginModel);
-
-        // if not success, return error message from result
-        if (result.NotSuccess) return result.ErrorMessage.ToActionResult();
-
-        // else ensure that result is not null
-        var user = result.Result ?? throw new Exception();
-
-        // return token as string
-        return user.Token.ToString().ToActionResult();
+        return await GetTokenAsync(loginModel);
     }
 
     [HttpPost("registerUser")]
@@ -77,7 +92,7 @@ public class UserController : Controller
             if (!IsPasswordStrong(registerModel.Password))
                 return UserEnumRegisterResult.PasswordIsNotStrong.ToActionResult();
 
-            await _context.Users.AddAsync(new User
+            var user = new User
             {
                 // hash password
                 Password = _passwordHasher.HashPassword(null, registerModel.Password),
@@ -88,11 +103,15 @@ public class UserController : Controller
                 PassportId = registerModel.PassportId,
                 // default role = user
                 Role = "User"
-            });
+            };
 
+            // add user
+            await _context.Users.AddAsync(user);
+
+            // save changes
             await _context.SaveChangesAsync();
 
-            return UserEnumRegisterResult.Success.ToActionResult();
+            return await GetTokenAsync(registerModel, user);
         }
         catch (Exception) // catch any exception
         {
@@ -101,18 +120,34 @@ public class UserController : Controller
         }
     }
 
-    private async Task<IGenericResult<TokenizedUser>> GenerateTokenAsync(IUserTargetedModel userTargetedModel)
+    private async Task<JsonResult> GetTokenAsync(IUserTargetedModel userTargetedModel, User? preUser = null)
     {
-        // try to find user by name and passport id
-        var user = await GetUser(userTargetedModel);
+        // try to generate new toke
+        var result = await GenerateTokenAsync(userTargetedModel, preUser);
+
+        // if not success, return error message from result
+        if (result.NotSuccess) return result.ErrorValue.ToActionResult();
+
+        // else ensure that result is not null
+        var user = result.Result ?? throw new Exception();
+
+        // return token as string
+        return user.Token.ToString().ToActionResult();
+    }
+
+    private async Task<IGenericResult<TokenizedUser, UserEnumTokenResult>> GenerateTokenAsync(IUserTargetedModel userTargetedModel,
+        User? preUser = null)
+    {
+        // try to find user by name and passport id or using pre-defined user from cache
+        var user = preUser ?? await GetUser(userTargetedModel);
 
         // if user not found, return it
         if (user == null)
         {
             // by default, generic result holds failed value and null entity
-            return new GenericResult<TokenizedUser>
+            return new GenericResult<TokenizedUser, UserEnumTokenResult>
             {
-                ErrorMessage = "User not found"
+                ErrorValue = UserEnumTokenResult.UserNotFound
             };
         }
 
@@ -121,9 +156,9 @@ public class UserController : Controller
 
         // if password is not verified successfully, return error message
         if (result != PasswordVerificationResult.Success)
-            return new GenericResult<TokenizedUser>
+            return new GenericResult<TokenizedUser, UserEnumTokenResult>
             {
-                ErrorMessage = "Invalid password"
+                ErrorValue = UserEnumTokenResult.InvalidPassword
             };
 
         // try to auth with manager
@@ -132,17 +167,16 @@ public class UserController : Controller
         // if it's null, that means, user already exists in cache
         if (generated == null)
         {
-            return new GenericResult<TokenizedUser>
+            return new GenericResult<TokenizedUser, UserEnumTokenResult>
             {
-                ErrorMessage = "Already logged in"
+                ErrorValue = UserEnumTokenResult.AlreadyLoggedIn
             };
         }
 
         // return success result
-        return new GenericResult<TokenizedUser>
+        return new GenericResult<TokenizedUser, UserEnumTokenResult>
         {
-            Result = generated,
-            ErrorMessage = null
+            Result = generated
         };
     }
 
@@ -178,16 +212,15 @@ public enum UserEnumUpdateRoleResult
     UnknownRole
 }
 
-public enum UserEnumLoginResult
+public enum UserEnumTokenResult
 {
-    Success,
-    InvalidPassword,
-    UnknownUser
+    AlreadyLoggedIn,
+    UserNotFound,
+    InvalidPassword
 }
 
 public enum UserEnumRegisterResult
 {
-    Success,
     UserAlreadyExists,
     PasswordIsNotStrong,
     InternalError
