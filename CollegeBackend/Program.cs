@@ -67,7 +67,7 @@ if (app.Environment.IsDevelopment())
 }
 
 // use https redirects
-app.UseHttpsRedirection();
+// app.UseHttpsRedirection();
 
 // enable auth
 app.UseAuthentication();

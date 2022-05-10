@@ -1,6 +1,6 @@
 USE master;
 
-DROP DATABASE CollegeBackend;
+DROP DATABASE IF EXISTS CollegeBackend;
 
 CREATE DATABASE CollegeBackend;
 
