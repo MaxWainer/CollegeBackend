@@ -16,6 +16,12 @@ public interface IAuthenticationManager
     Task<TokenizedUser?> AuthenticateAsync(User user);
 
     /// <summary>
+    /// Remove user's token for future resets
+    /// </summary>
+    /// <param name="guid">User's access token</param>
+    bool ClearAuthentication(Guid guid);
+
+    /// <summary>
     /// Get tokenized user by token
     /// </summary>
     /// <param name="token">User token</param>
@@ -24,4 +30,7 @@ public interface IAuthenticationManager
 
     /// <inheritdoc cref="this[Guid]"/>
     Task<TokenizedUser?> GetAsync(Guid token);
+    
+    /// <inheritdoc cref="this[Guid]"/>
+    Task<TokenizedUser?> GetAsyncByUser(User user);
 }

@@ -19,7 +19,7 @@ public class AuthenticationManager : IAuthenticationManager
 
         // generate token
         var generated = Guid.NewGuid();
-        
+
         // create new user
         var tokenizedUser = new TokenizedUser
         {
@@ -39,10 +39,30 @@ public class AuthenticationManager : IAuthenticationManager
         return Task.FromResult(Authenticate(user));
     }
 
-    public TokenizedUser? this[Guid token] => _users[token];
+    public bool ClearAuthentication(Guid guid)
+    {
+        return _users.Remove(guid);
+    }
+
+    public TokenizedUser? this[Guid token]
+    {
+        get
+        {
+            KeyValuePair<Guid, TokenizedUser>? result = _users.FirstOrDefault(pair => pair.Key == token);
+
+            return result?.Value;
+        }
+    }
 
     public Task<TokenizedUser?> GetAsync(Guid token)
     {
         return Task.FromResult(this[token]);
+    }
+
+    public Task<TokenizedUser?> GetAsyncByUser(User user)
+    {
+        KeyValuePair<Guid, TokenizedUser>? result = _users.FirstOrDefault(pair => pair.Value.User.PassportId == user.PassportId);
+
+        return Task.FromResult(result?.Value);
     }
 }

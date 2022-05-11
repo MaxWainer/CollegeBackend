@@ -1,10 +1,14 @@
 USE master;
+GO
 
 DROP DATABASE IF EXISTS CollegeBackend;
+GO
 
 CREATE DATABASE CollegeBackend;
+GO
 
 USE CollegeBackend;
+GO
 
 CREATE TABLE [active]
 (

@@ -1,4 +1,5 @@
 using CollegeBackend.Objects.Database;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -16,6 +17,7 @@ public class SittingController : Controller
     }
 
     [HttpPost("list")]
+    [Authorize(Roles = "User,Administrator,Moderator")]
     public async Task<ActionResult<List<Sitting>>> ListSittings()
     {
         return await _context.Sittings.ToListAsync(); // TODO: Include

@@ -5,7 +5,6 @@ using CollegeBackend.Objects.Database;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -20,23 +19,8 @@ builder
                 options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
             );
         
-        service.AddAuthentication("Basic")
-            .AddScheme<AuthenticationTokenOptions, AuthenticationHandler>("Basic", _ => { });
-
-        service.AddAuthorization(options =>
-        {
-            options.AddPolicy("Administrator",
-                policy => policy.RequireRole("Administrator"));
-
-            options.AddPolicy("User",
-                policy => policy.RequireRole("User"));
-
-            options.AddPolicy("Moderator",
-                policy => policy.RequireRole("Moderator"));
-
-            options.AddPolicy("AdministratorAndModerator",
-                policy => policy.RequireRole("Administrator", "Moderator"));
-        });
+        service.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+            .AddScheme<AuthenticationTokenOptions, AuthenticationHandler>(JwtBearerDefaults.AuthenticationScheme, _ => { });
 
         // add controllers
         service.AddControllers();
@@ -49,8 +33,8 @@ builder
         service.AddSingleton<IAuthenticationManager, AuthenticationManager>();
         service.AddDbContext<CollegeBackendContext>(options =>
         {
-            options.EnableSensitiveDataLogging();
-            
+            // options.EnableSensitiveDataLogging();
+
             options.UseSqlServer(connectionString, sqlServerOptions => sqlServerOptions.UseNetTopologySuite());
         });
         service.AddSingleton<IPasswordHasher<User?>, PasswordHasher<User?>>();

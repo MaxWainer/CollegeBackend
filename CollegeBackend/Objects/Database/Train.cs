@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿namespace CollegeBackend.Objects.Database;
 
-namespace CollegeBackend.Objects.Database;
-
-public partial class Train
+public class Train
 {
     public Train()
     {

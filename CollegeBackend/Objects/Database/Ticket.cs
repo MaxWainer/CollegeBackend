@@ -1,14 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using CollegeBackend.Objects.Database;
+﻿namespace CollegeBackend.Objects.Database;
 
-namespace CollegeBackend.Objects.Database;
-
-public partial class Ticket
+public class Ticket
 {
     public int TicketId { get; set; }
     public int RelatedDirectionId { get; set; }
     public int RelatedActiveId { get; set; }
+
     public DateTime StartDate { get; set; }
     public int PassportId { get; set; }
     public int EndStationId { get; set; }

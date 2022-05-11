@@ -1,6 +1,6 @@
 ﻿namespace CollegeBackend.Objects.Database;
 
-public partial class User
+public class User
 {
     public User()
     {

@@ -19,6 +19,7 @@ public class ActiveController : Controller
     }
 
     [HttpGet("list")]
+    [Authorize(Roles = "User,Administrator,Moderator")]
     public async Task<ActionResult<List<Active>>> ListActives()
     {
         return await _context.Actives
@@ -26,7 +27,7 @@ public class ActiveController : Controller
     }
 
     [HttpPost("remove/{activeId:int}")]
-    [Authorize(Policy = "Administrator")]
+    [Authorize(Roles = "Administrator")]
     public async Task<JsonResult> RemoveActive(int activeId)
     {
         var active = await _context.Actives.AsQueryable()
@@ -46,7 +47,7 @@ public class ActiveController : Controller
     }
 
     [HttpPost("add")]
-    [Authorize(Policy = "Administrator")]
+    [Authorize(Roles = "Administrator")]
     public async Task<JsonResult> AddActive(
         [FromBody] ActiveModule activeModule)
     {

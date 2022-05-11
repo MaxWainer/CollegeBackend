@@ -17,37 +17,60 @@ public class UserController : Controller
 {
     private const string SpecialChars = @"%!@#$%^&*()?/>.<,:;'\|}]{[_~`+=-";
 
+    private readonly ILogger<UserController> _logger;
     private readonly CollegeBackendContext _context;
     private readonly IPasswordHasher<User?> _passwordHasher;
     private readonly IAuthenticationManager _authenticationManager;
 
     public UserController(CollegeBackendContext context, IPasswordHasher<User?> passwordHasher,
-        IAuthenticationManager authenticationManager)
+        IAuthenticationManager authenticationManager, ILogger<UserController> logger)
     {
         _context = context;
         _passwordHasher = passwordHasher;
         _authenticationManager = authenticationManager;
+        _logger = logger;
+    }
+
+    [HttpPost("clearCache")]
+    [Authorize(Roles = "User,Administrator,Moderator")]
+    public JsonResult ClearCache([FromBody] ClearCacheModel model)
+    {
+        var token = Guid.Parse(model.Token);
+
+
+        var result = _authenticationManager.ClearAuthentication(token);
+
+        _logger.Log(LogLevel.Information, "Clearing token for {}, is success {}", model.Token, result);
+
+        return UserEnumClearCacheResult.Success.ToActionResult();
     }
 
     [HttpPost("deleteUser")]
-    [Authorize(Policy = "Administrator")]
+    [Authorize(Roles = "Administrator")]
     public async Task<JsonResult> DeleteUser([FromBody] DeleteUserModel deleteUserModel)
     {
         var user = await GetUser(deleteUserModel);
-        
+
         if (user == null) return UserEnumDeleteResult.UnknownUser.ToActionResult();
+
+        var token = await _authenticationManager.GetAsyncByUser(user);
+
+        if (token != null)
+        {
+            _authenticationManager.ClearAuthentication(token.Token);
+        }
 
         await _context.Users
             .Remove(user)
             .ReloadAsync();
 
         await _context.SaveChangesAsync();
-        
+
         return UserEnumDeleteResult.Success.ToActionResult();
     }
 
     [HttpPost("updateRole")]
-    [Authorize(Policy = "Administrator")]
+    [Authorize(Roles = "Administrator")]
     public async Task<JsonResult> UpdateRole(
         [FromBody] RoleUpdateModel roleUpdateModel)
     {
@@ -55,7 +78,8 @@ public class UserController : Controller
 
         if (user == null) return UserEnumUpdateRoleResult.UnknownUser.ToActionResult();
 
-        if (!Roles.AllowedNames.Contains(roleUpdateModel.NewRole)) return UserEnumUpdateRoleResult.UnknownRole.ToActionResult();
+        if (!Roles.AllowedNames.Contains(roleUpdateModel.NewRole))
+            return UserEnumUpdateRoleResult.UnknownRole.ToActionResult();
 
         user.Role = roleUpdateModel.NewRole;
 
@@ -64,7 +88,7 @@ public class UserController : Controller
             .ReloadAsync();
 
         await _context.SaveChangesAsync();
-        
+
         return UserEnumUpdateRoleResult.Success.ToActionResult();
     }
 
@@ -125,6 +149,9 @@ public class UserController : Controller
         // try to generate new toke
         var result = await GenerateTokenAsync(userTargetedModel, preUser);
 
+        _logger.Log(LogLevel.Information, "Token generation result: {} for user with passport id {} ({})",
+            result.Result?.Token, result.Result?.User.PassportId, result.Success ? "No any error value" : result.ErrorValue);
+
         // if not success, return error message from result
         if (result.NotSuccess) return result.ErrorValue.ToActionResult();
 
@@ -135,7 +162,8 @@ public class UserController : Controller
         return user.Token.ToString().ToActionResult();
     }
 
-    private async Task<IGenericResult<TokenizedUser, UserEnumTokenResult>> GenerateTokenAsync(IUserTargetedModel userTargetedModel,
+    private async Task<IGenericResult<TokenizedUser, UserEnumTokenResult>> GenerateTokenAsync(
+        IUserTargetedModel userTargetedModel,
         User? preUser = null)
     {
         // try to find user by name and passport id or using pre-defined user from cache
@@ -217,6 +245,11 @@ public enum UserEnumTokenResult
     AlreadyLoggedIn,
     UserNotFound,
     InvalidPassword
+}
+
+public enum UserEnumClearCacheResult
+{
+    Success
 }
 
 public enum UserEnumRegisterResult

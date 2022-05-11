@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿namespace CollegeBackend.Objects.Database;
 
-namespace CollegeBackend.Objects.Database;
-
-public partial class Sitting
+public class Sitting
 {
     public int SitId { get; set; }
     public string Index { get; set; } = null!;

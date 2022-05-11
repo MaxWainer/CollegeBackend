@@ -18,8 +18,8 @@ public class TicketController : Controller
         _context = context;
     }
 
-    [HttpPost("list/{passportId}")]
-    [Authorize(Policy = "User")]
+    [HttpPost("list/{passportId:int}")]
+    [Authorize(Roles = "User,Administrator,Moderator")]
     public async Task<ActionResult<List<Ticket>>> ListTickets(int passportId)
     {
         // just select by passport id
@@ -32,7 +32,7 @@ public class TicketController : Controller
     }
 
     [HttpPost("order")]
-    [Authorize(Policy = "User")]
+    [Authorize(Roles = "User,Administrator,Moderator")]
     public async Task<JsonResult> OrderTicket(
         [FromBody]
         OrderModel orderModel)
@@ -101,8 +101,8 @@ public class TicketController : Controller
         return OrderTicketEnumResult.Success.ToActionResult();
     }
 
-    [HttpGet("delete/{ticketId}")]
-    [Authorize(Policy = "Administrator")]
+    [HttpGet("delete/{ticketId:int}")]
+    [Authorize(Roles = "Administrator,Moderator")]
     public async Task<JsonResult> DeleteTicket(int ticketId)
     {
         // we use it twice
