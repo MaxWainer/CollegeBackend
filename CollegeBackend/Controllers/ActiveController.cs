@@ -19,14 +19,13 @@ public class ActiveController : Controller
     }
 
     [HttpGet("list")]
-    [Authorize(Policy = "User")]
-    public async Task<ActionResult<Active[]>> ListActives()
+    public async Task<ActionResult<List<Active>>> ListActives()
     {
-        return new ActionResult<Active[]>(
-            await _context.Actives.ToArrayAsync());
+        return await _context.Actives
+            .ToListAsync();
     }
 
-    [HttpPost("remove/{activeId}")]
+    [HttpPost("remove/{activeId:int}")]
     [Authorize(Policy = "Administrator")]
     public async Task<JsonResult> RemoveActive(int activeId)
     {

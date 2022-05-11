@@ -56,19 +56,19 @@ namespace CollegeBackend
                 entity.HasOne(d => d.MainDirection)
                     .WithMany(p => p.Actives)
                     .HasForeignKey(d => d.MainDirectionId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .OnDelete(DeleteBehavior.Cascade)
                     .HasConstraintName("fk_active_directions_1");
 
                 entity.HasOne(d => d.Station)
                     .WithMany(p => p.Actives)
                     .HasForeignKey(d => d.StationId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .OnDelete(DeleteBehavior.Cascade)
                     .HasConstraintName("fk_active_stations_1");
 
                 entity.HasOne(d => d.Train)
                     .WithOne(p => p.Active)
                     .HasForeignKey<Active>(d => d.TrainId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .OnDelete(DeleteBehavior.Cascade)
                     .HasConstraintName("fk_active_trains_1");
             });
 
@@ -89,7 +89,7 @@ namespace CollegeBackend
                 entity.HasOne(d => d.RelatedTrain)
                     .WithMany(p => p.Carriages)
                     .HasForeignKey(d => d.RelatedTrainId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .OnDelete(DeleteBehavior.Cascade)
                     .HasConstraintName("fk_carriages_trains_1");
             });
 
@@ -128,7 +128,7 @@ namespace CollegeBackend
                 entity.HasOne(d => d.RelatedCarriage)
                     .WithMany(p => p.Sittings)
                     .HasForeignKey(d => d.RelatedCarriageId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .OnDelete(DeleteBehavior.Cascade)
                     .HasConstraintName("fk_sitting_carriages_1");
             });
 
@@ -147,7 +147,7 @@ namespace CollegeBackend
                 entity.HasOne(d => d.RelatedDirectionNavigation)
                     .WithMany(p => p.Stations)
                     .HasForeignKey(d => d.RelatedDirection)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .OnDelete(DeleteBehavior.Cascade)
                     .HasConstraintName("fk_stations_directions_1");
             });
 
@@ -174,30 +174,30 @@ namespace CollegeBackend
                 entity.HasOne(d => d.EndStation)
                     .WithMany(p => p.Tickets)
                     .HasForeignKey(d => d.EndStationId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .OnDelete(DeleteBehavior.Cascade)
                     .HasConstraintName("fk_tickets_stations_1");
 
                 entity.HasOne(d => d.Passport)
                     .WithMany(p => p.Tickets)
                     .HasForeignKey(d => d.PassportId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .OnDelete(DeleteBehavior.Cascade)
                     .HasConstraintName("fk_users_tickets_1");
 
                 entity.HasOne(d => d.RelatedActive)
                     .WithMany(p => p.Tickets)
                     .HasForeignKey(d => d.RelatedActiveId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .OnDelete(DeleteBehavior.Cascade)
                     .HasConstraintName("fk_tickets_active_1");
 
                 entity.HasOne(d => d.RelatedDirection)
                     .WithMany(p => p.Tickets)
                     .HasForeignKey(d => d.RelatedDirectionId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .OnDelete(DeleteBehavior.Cascade)
                     .HasConstraintName("fk_tickets_directions_1");
 
                 entity.HasOne(d => d.Sitting)
                     .WithOne(p => p.Ticket)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .OnDelete(DeleteBehavior.Cascade)
                     .HasConstraintName("fk_sitting_tickets_1");
             });
 

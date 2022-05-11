@@ -26,9 +26,9 @@ public class TicketController : Controller
         var where =
             from ticket in _context.Tickets
             where ticket.PassportId == passportId
-            select ticket;
+            select ticket; // TODO: Include
 
-        return (await where.ToListAsync()).ToActionResult();
+        return await where.ToListAsync();
     }
 
     [HttpPost("order")]

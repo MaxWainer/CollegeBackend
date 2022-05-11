@@ -18,7 +18,7 @@ public class SittingController : Controller
     [HttpPost("list")]
     public async Task<ActionResult<List<Sitting>>> ListSittings()
     {
-        return await _context.Sittings.ToListAsync();
+        return await _context.Sittings.ToListAsync(); // TODO: Include
     }
     
 }

@@ -15,10 +15,13 @@ builder
     .Services
     .Apply(service =>
     {
+        service.AddControllersWithViews()
+            .AddNewtonsoftJson(options =>
+                options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
+            );
+        
         service.AddAuthentication("Basic")
-            .AddScheme<AuthenticationTokenOptions, AuthenticationHandler>("Basic", _ =>
-            {
-            });
+            .AddScheme<AuthenticationTokenOptions, AuthenticationHandler>("Basic", _ => { });
 
         service.AddAuthorization(options =>
         {
@@ -44,9 +47,13 @@ builder
                                    "Missing connection string value in appsettings.json!");
 
         service.AddSingleton<IAuthenticationManager, AuthenticationManager>();
-        service.AddSingleton<IPasswordHasher<User?>, PasswordHasher<User?>>();
         service.AddDbContext<CollegeBackendContext>(options =>
-            options.UseSqlServer(connectionString, x => x.UseNetTopologySuite()));
+        {
+            options.EnableSensitiveDataLogging();
+            
+            options.UseSqlServer(connectionString, sqlServerOptions => sqlServerOptions.UseNetTopologySuite());
+        });
+        service.AddSingleton<IPasswordHasher<User?>, PasswordHasher<User?>>();
     });
 
 // https://aka.ms/aspnetcore/swashbuckle

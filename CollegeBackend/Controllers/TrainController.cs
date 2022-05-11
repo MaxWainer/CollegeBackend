@@ -18,7 +18,7 @@ public class TrainController : Controller
     [HttpPost("list")]
     public async Task<ActionResult<List<Train>>> ListTrains()
     {
-        return await _context.Trains.ToListAsync();
+        return await _context.Trains.ToListAsync(); // TODO: Include
     }
     
 }
