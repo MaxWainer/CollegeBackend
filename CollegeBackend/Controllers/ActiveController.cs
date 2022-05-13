@@ -23,6 +23,7 @@ public class ActiveController : Controller
     public async Task<ActionResult<List<Active>>> ListActives()
     {
         return await _context.Actives
+            .Distinct() // should be here 
             .ToListAsync();
     }
 
