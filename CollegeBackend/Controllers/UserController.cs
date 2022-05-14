@@ -150,7 +150,8 @@ public class UserController : Controller
         var result = await GenerateTokenAsync(userTargetedModel, preUser);
 
         _logger.Log(LogLevel.Information, "Token generation result: {} for user with passport id {} ({})",
-            result.Result?.Token, result.Result?.User.PassportId, result.Success ? "No any error value" : result.ErrorValue);
+            result.Result?.Token, result.Result?.User.PassportId,
+            result.Success ? "No any error value" : result.ErrorValue);
 
         // if not success, return error message from result
         if (result.NotSuccess) return result.ErrorValue.ToActionResult();
@@ -159,7 +160,11 @@ public class UserController : Controller
         var user = result.Result ?? throw new Exception();
 
         // return token as string
-        return user.Token.ToString().ToActionResult();
+        return new TokenResult
+        {
+            Token = user.Token.ToString(),
+            User = user.User
+        }.ToActionResult();
     }
 
     private async Task<IGenericResult<TokenizedUser, UserEnumTokenResult>> GenerateTokenAsync(
@@ -224,6 +229,14 @@ public class UserController : Controller
             where contextUser.Username == userTargetedModel.Username &&
                   contextUser.PassportId == userTargetedModel.PassportId
             select contextUser).FirstOrDefaultAsync();
+    }
+
+
+    private class TokenResult
+    {
+        public string Token { get; set; }
+
+        public User User { get; set; }
     }
 }
 

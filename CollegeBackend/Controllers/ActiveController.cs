@@ -23,6 +23,10 @@ public class ActiveController : Controller
     public async Task<ActionResult<List<Active>>> ListActives()
     {
         return await _context.Actives
+            .Include(active => active.MainDirection)
+            .Include(active => active.Station)
+            .Include(active => active.Train)
+            .Distinct()
             .ToListAsync();
     }
 
@@ -30,7 +34,7 @@ public class ActiveController : Controller
     [Authorize(Roles = "Administrator")]
     public async Task<JsonResult> RemoveActive(int activeId)
     {
-        var active = await _context.Actives.AsQueryable()
+        var active = await _context.Actives
             .FirstOrDefaultAsync(active => active.ActiveId == activeId);
 
         if (active == null)
