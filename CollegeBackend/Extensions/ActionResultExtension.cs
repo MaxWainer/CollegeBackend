@@ -8,7 +8,7 @@ public static class ActionResultExtension
     {
         return new JsonResult(new ResultValue<TValue> { Result = it });
     }
-
+    
     private class ResultValue<TValue>
     {
         public TValue? Result { get; set; }

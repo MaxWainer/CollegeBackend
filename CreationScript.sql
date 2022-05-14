@@ -46,9 +46,11 @@ GO
 
 CREATE TABLE [sitting]
 (
-    [sit_id]              int     NOT NULL IDENTITY (1,1),
-    [index]               char(3) NOT NULL,
-    [related_carriage_id] int     NOT NULL,
+    [sit_id]              int          NOT NULL IDENTITY (1,1),
+    [index]               char(3)      NOT NULL,
+    [related_carriage_id] int          NOT NULL,
+    [sit_type]            nvarchar(10) NOT NULL DEFAULT N'Плацкарт',
+    [price]               int          NOT NULL DEFAULT 5000,
     CONSTRAINT [_copy_6] PRIMARY KEY CLUSTERED ([sit_id])
         WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON)
 )

@@ -29,8 +29,21 @@ public class ActiveController : Controller
             .Distinct()
             .ToListAsync();
     }
+    
+    [HttpGet("list/{activeId:int}")]
+    [Authorize(Roles = "User,Administrator,Moderator")]
+    public async Task<ActionResult<List<Active>>> ListActives(int activeId)
+    {
+        return await _context.Actives
+            .Where(active => active.ActiveId == activeId)
+            .Include(active => active.MainDirection)
+            .Include(active => active.Station)
+            .Include(active => active.Train)
+            .Distinct()
+            .ToListAsync();
+    }
 
-    [HttpPost("remove/{activeId:int}")]
+    [HttpGet("remove/{activeId:int}")]
     [Authorize(Roles = "Administrator")]
     public async Task<JsonResult> RemoveActive(int activeId)
     {

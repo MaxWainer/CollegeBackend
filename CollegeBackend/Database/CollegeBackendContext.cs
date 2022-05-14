@@ -122,6 +122,13 @@ namespace CollegeBackend
                     .IsFixedLength();
 
                 entity.Property(e => e.RelatedCarriageId).HasColumnName("related_carriage_id");
+                
+                entity.Property(e => e.SitType)
+                    .IsUnicode(true)
+                    .HasMaxLength(10)
+                    .HasColumnName("sit_type");
+
+                entity.Property(e => e.Price).HasColumnName("price");
 
                 entity.HasOne(d => d.RelatedCarriage)
                     .WithMany(p => p.Sittings)
