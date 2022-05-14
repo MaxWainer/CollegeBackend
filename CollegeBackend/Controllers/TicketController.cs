@@ -32,7 +32,7 @@ public class TicketController : Controller
     }
 
     [HttpPost("order")]
-    [Authorize(Roles = "User,Administrator,Moderator")]
+    //[Authorize(Roles = "User,Administrator,Moderator")]
     public async Task<JsonResult> OrderTicket(
         [FromBody]
         OrderModel orderModel)
