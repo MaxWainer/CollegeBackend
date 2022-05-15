@@ -62,11 +62,12 @@ public partial class CollegeBackendContext : DbContext
                 .HasForeignKey(d => d.StationId)
                 .OnDelete(DeleteBehavior.Cascade)
                 .HasConstraintName("fk_active_stations_1");
-
-            entity.HasOne(d => d.Train)
-                .WithOne(p => p.Active)
-                .HasForeignKey<Active>(d => d.TrainId)
+            
+            entity.HasMany(d => d.Trains)
+                .WithOne(t => t.Active)
+                .HasForeignKey(t => t.TrainId)
                 .OnDelete(DeleteBehavior.Cascade)
+                .IsRequired()
                 .HasConstraintName("fk_active_trains_1");
         });
 

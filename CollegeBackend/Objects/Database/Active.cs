@@ -18,6 +18,6 @@ public class Active
 
     public virtual Direction MainDirection { get; set; } = null!;
     public virtual Station Station { get; set; } = null!;
-    public virtual Train Train { get; set; } = null!;
+    public virtual ICollection<Train> Trains { get; set; } = null!;
     public virtual ICollection<Ticket> Tickets { get; set; }
 }

@@ -28,8 +28,7 @@ builder
 
         // add service, college backend context
         var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ??
-                               throw new ArgumentNullException("connectionString",
-                                   "Missing connection string value in appsettings.json!");
+                               throw new NullReferenceException("Missing connection string value in appsettings.json!");
 
         service.AddSingleton<IAuthenticationManager, AuthenticationManager>();
         service.AddDbContext<CollegeBackendContext>(options =>
@@ -38,6 +37,7 @@ builder
 
             options.UseSqlServer(connectionString, sqlServerOptions => sqlServerOptions
                 .UseNetTopologySuite()
+                .CommandTimeout(5 * 60)
                 .UseQuerySplittingBehavior(QuerySplittingBehavior.SplitQuery));
         });
         service.AddSingleton<IPasswordHasher<User?>, PasswordHasher<User?>>();

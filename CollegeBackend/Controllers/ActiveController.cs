@@ -23,9 +23,6 @@ public sealed class ActiveController : Controller
     public async Task<ActionResult<List<Active>>> ListActives()
     {
         return await _context.Actives
-            .Include(active => active.MainDirection)
-            .Include(active => active.Station)
-            .Include(active => active.Train)
             .ToListAsync();
     }
     
@@ -35,10 +32,6 @@ public sealed class ActiveController : Controller
     {
         return await _context.Actives
             .Where(active => active.ActiveId == activeId)
-            .Include(active => active.MainDirection)
-            .Include(active => active.Station)
-            .Include(active => active.Train)
-            .Distinct()
             .ToListAsync();
     }
 
