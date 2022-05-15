@@ -7,7 +7,7 @@ namespace CollegeBackend.Controllers;
 
 [Route("trains/[controller]")]
 [ApiController]
-public class TrainController : Controller
+public sealed class TrainController : Controller
 {
     private readonly CollegeBackendContext _context;
 

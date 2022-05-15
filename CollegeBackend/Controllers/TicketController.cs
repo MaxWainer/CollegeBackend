@@ -9,7 +9,7 @@ namespace CollegeBackend.Controllers;
 
 [Route("ticket/[controller]")]
 [ApiController]
-public class TicketController : Controller
+public sealed class TicketController : Controller
 {
     private readonly CollegeBackendContext _context;
 

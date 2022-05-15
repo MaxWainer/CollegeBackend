@@ -9,7 +9,7 @@ namespace CollegeBackend.Controllers;
 
 [Route("active/[controller]")]
 [ApiController]
-public class ActiveController : Controller
+public sealed class ActiveController : Controller
 {
     private readonly CollegeBackendContext _context;
 
@@ -26,7 +26,6 @@ public class ActiveController : Controller
             .Include(active => active.MainDirection)
             .Include(active => active.Station)
             .Include(active => active.Train)
-            .Distinct()
             .ToListAsync();
     }
     

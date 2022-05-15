@@ -18,9 +18,10 @@ builder
             .AddNewtonsoftJson(options =>
                 options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
             );
-        
+
         service.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-            .AddScheme<AuthenticationTokenOptions, AuthenticationHandler>(JwtBearerDefaults.AuthenticationScheme, _ => { });
+            .AddScheme<AuthenticationTokenOptions, AuthenticationHandler>(JwtBearerDefaults.AuthenticationScheme,
+                _ => { });
 
         // add controllers
         service.AddControllers();
@@ -35,7 +36,9 @@ builder
         {
             // options.EnableSensitiveDataLogging();
 
-            options.UseSqlServer(connectionString, sqlServerOptions => sqlServerOptions.UseNetTopologySuite());
+            options.UseSqlServer(connectionString, sqlServerOptions => sqlServerOptions
+                .UseNetTopologySuite()
+                .UseQuerySplittingBehavior(QuerySplittingBehavior.SplitQuery));
         });
         service.AddSingleton<IPasswordHasher<User?>, PasswordHasher<User?>>();
     });

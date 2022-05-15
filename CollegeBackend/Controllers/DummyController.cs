@@ -7,7 +7,7 @@ namespace CollegeBackend.Controllers;
 [Route("dummy/[controller]")]
 [ApiController]
 [AllowAnonymous]
-public class DummyController : Controller
+public sealed class DummyController : Controller
 {
 
     [HttpPost("check")]

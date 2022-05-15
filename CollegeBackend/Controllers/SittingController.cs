@@ -7,7 +7,7 @@ namespace CollegeBackend.Controllers;
 
 [Route("sittings/[controller]")]
 [ApiController]
-public class SittingController : Controller
+public sealed class SittingController : Controller
 {
     private readonly CollegeBackendContext _context;
 

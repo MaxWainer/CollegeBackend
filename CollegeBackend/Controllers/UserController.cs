@@ -13,7 +13,7 @@ namespace CollegeBackend.Controllers;
 
 [Route("users/[controller]")]
 [ApiController]
-public class UserController : Controller
+public sealed class UserController : Controller
 {
     private const string SpecialChars = @"%!@#$%^&*()?/>.<,:;'\|}]{[_~`+=-";
 
