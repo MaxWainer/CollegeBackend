@@ -1,6 +1,9 @@
-﻿namespace CollegeBackend.Objects.Database;
+﻿using System;
+using System.Collections.Generic;
 
-public class Active
+namespace CollegeBackend.Objects.Database;
+
+public partial class Active
 {
     public Active()
     {
@@ -9,15 +12,13 @@ public class Active
 
     public int ActiveId { get; set; }
     public int StationId { get; set; }
-
     public DateTime StartDateTime { get; set; }
     public int MainDirectionId { get; set; }
     public int TrainId { get; set; }
-
     public DateTime MainStartDateTime { get; set; }
 
     public virtual Direction MainDirection { get; set; } = null!;
     public virtual Station Station { get; set; } = null!;
-    public virtual ICollection<Train> Trains { get; set; } = null!;
+    public virtual Train Train { get; set; } = null!;
     public virtual ICollection<Ticket> Tickets { get; set; }
 }

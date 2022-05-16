@@ -1,6 +1,9 @@
-﻿namespace CollegeBackend.Objects.Database;
+﻿using System;
+using System.Collections.Generic;
 
-public class Direction
+namespace CollegeBackend.Objects.Database;
+
+public partial class Direction
 {
     public Direction()
     {

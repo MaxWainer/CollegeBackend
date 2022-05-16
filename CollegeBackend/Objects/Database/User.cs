@@ -1,6 +1,9 @@
-﻿namespace CollegeBackend.Objects.Database;
+﻿using System;
+using System.Collections.Generic;
 
-public class User
+namespace CollegeBackend.Objects.Database;
+
+public partial class User
 {
     public User()
     {
@@ -11,7 +14,7 @@ public class User
     public string FirstName { get; set; } = null!;
     public string SecondName { get; set; } = null!;
     public string Patronymic { get; set; } = null!;
-    public string Role { get; set; }
+    public string Role { get; set; } = null!;
     public string Username { get; set; } = null!;
     public string Password { get; set; } = null!;
 
