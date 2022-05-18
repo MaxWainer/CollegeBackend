@@ -219,6 +219,7 @@ namespace CollegeBackend
                 entity.HasOne(d => d.Sitting)
                     .WithOne(p => p.Ticket)
                     .HasForeignKey<Ticket>(d => d.SittingId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
                     .IsRequired(false)
                     .HasConstraintName("fk_sitting_tickets_1");
             });

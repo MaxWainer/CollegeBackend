@@ -23,15 +23,9 @@ public sealed class ActiveController : Controller
     public async Task<ActionResult<List<Active>>> ListActives()
     {
         return await _context.Actives
-            .ToListAsync();
-    }
-    
-    [HttpGet("list/{activeId:int}")]
-    [Authorize(Roles = "User,Administrator,Moderator")]
-    public async Task<ActionResult<List<Active>>> ListActives(int activeId)
-    {
-        return await _context.Actives
-            .Where(active => active.ActiveId == activeId)
+            .Include(a => a.Train)
+            .Include(a => a.Station)
+            .Include(a => a.MainDirection)
             .ToListAsync();
     }
 
